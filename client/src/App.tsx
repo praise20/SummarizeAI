@@ -11,6 +11,7 @@ import Dashboard from "@/pages/dashboard";
 import Upload from "@/pages/upload";
 import Summaries from "@/pages/summaries";
 import Integrations from "@/pages/integrations";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -34,6 +35,7 @@ function Router() {
           <Route path="/upload" component={Upload} />
           <Route path="/summaries" component={Summaries} />
           <Route path="/integrations" component={Integrations} />
+          <Route path="/settings" component={Settings} />
         </>
       )}
       <Route component={NotFound} />
