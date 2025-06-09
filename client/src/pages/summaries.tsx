@@ -300,10 +300,22 @@ export default function Summaries() {
                       
                       {meeting.summary && (
                         <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                          {meeting.summary.length > 120 
-                            ? `${meeting.summary.substring(0, 120)}...` 
-                            : meeting.summary
-                          }
+                          {(() => {
+                            try {
+                              const parsed = JSON.parse(meeting.summary);
+                              if (Array.isArray(parsed)) {
+                                const text = parsed.join('. ');
+                                return text.length > 120 ? `${text.substring(0, 120)}...` : text;
+                              }
+                              return meeting.summary.length > 120 
+                                ? `${meeting.summary.substring(0, 120)}...` 
+                                : meeting.summary;
+                            } catch {
+                              return meeting.summary.length > 120 
+                                ? `${meeting.summary.substring(0, 120)}...` 
+                                : meeting.summary;
+                            }
+                          })()}
                         </p>
                       )}
                     </div>
@@ -380,9 +392,30 @@ export default function Summaries() {
                               <div>
                                 <h3 className="font-semibold mb-2">Summary</h3>
                                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                                    {meeting.summary}
-                                  </p>
+                                  <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                    {(() => {
+                                      try {
+                                        // Try to parse if it's a JSON array
+                                        const parsed = JSON.parse(meeting.summary);
+                                        if (Array.isArray(parsed)) {
+                                          return (
+                                            <ul className="space-y-1">
+                                              {parsed.map((item: string, index: number) => (
+                                                <li key={index} className="flex items-start space-x-2">
+                                                  <span className="text-gray-400">•</span>
+                                                  <span>{item}</span>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          );
+                                        }
+                                        return <p>{parsed}</p>;
+                                      } catch {
+                                        // If parsing fails, display as plain text
+                                        return <p>{meeting.summary}</p>;
+                                      }
+                                    })()}
+                                  </div>
                                 </div>
                               </div>
                             )}
@@ -408,24 +441,28 @@ export default function Summaries() {
                             )}
 
                             {/* Action Items */}
-                            {meeting.actionItems && Array.isArray(meeting.actionItems) && meeting.actionItems.length > 0 && (
-                              <div>
-                                <h3 className="font-semibold mb-2 flex items-center">
-                                  <ListTodo className="w-4 h-4 mr-2 text-blue-600" />
-                                  Action Items
-                                </h3>
-                                <ul className="space-y-2">
-                                  {meeting.actionItems
-                                    .filter(action => typeof action === 'string' && action !== '[object Object]')
-                                    .map((action, index) => (
-                                    <li key={index} className="flex items-start space-x-2">
-                                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                                      <span className="text-gray-700 dark:text-gray-300">{action}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                            {(() => {
+                              const validActionItems = meeting.actionItems && Array.isArray(meeting.actionItems) 
+                                ? meeting.actionItems.filter(action => typeof action === 'string' && action !== '[object Object]' && action.trim() !== '')
+                                : [];
+                              
+                              return validActionItems.length > 0 && (
+                                <div>
+                                  <h3 className="font-semibold mb-2 flex items-center">
+                                    <ListTodo className="w-4 h-4 mr-2 text-blue-600" />
+                                    Action Items
+                                  </h3>
+                                  <ul className="space-y-2">
+                                    {validActionItems.map((action, index) => (
+                                      <li key={index} className="flex items-start space-x-2">
+                                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                                        <span className="text-gray-700 dark:text-gray-300">{action}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              );
+                            })()}
 
                             {/* Transcription */}
                             {meeting.transcription && (

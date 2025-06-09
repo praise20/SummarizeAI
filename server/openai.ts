@@ -44,13 +44,20 @@ export async function summarizeMeeting(transcription: string): Promise<{
           content: `You are an expert meeting summarizer. Analyze the meeting transcription and provide a structured summary in JSON format with the following fields:
           - summary: A concise summary of the main topics discussed (as a single string)
           - keyDecisions: An array of strings, each representing a key decision made during the meeting
-          - actionItems: An array of strings, each representing a specific action item with assignees if mentioned
+          - actionItems: An array of strings, each representing a specific action item, task, or follow-up that needs to be completed
+          
+          For action items, look for:
+          - Tasks that need to be done
+          - Follow-up actions mentioned
+          - Assignments given to people
+          - Deadlines or commitments made
+          - Things that "should be done" or "need to happen"
           
           Example format:
           {
             "summary": "Team discussed project progress and timeline updates.",
             "keyDecisions": ["Approved budget increase", "Changed deadline to next month"],
-            "actionItems": ["John will finalize the proposal by Friday", "Sarah will schedule follow-up meeting"]
+            "actionItems": ["John will finalize the proposal by Friday", "Each department to submit progress reports", "Schedule follow-up meeting next week"]
           }
           
           Respond with valid JSON only. Ensure all array items are simple strings, not objects.`
