@@ -57,7 +57,7 @@ export class DatabaseStorage implements IStorage {
     return createdMeeting;
   }
 
-  async getMeeting(id: number, userId: string): Promise<Meeting | undefined> {
+  async getMeeting(id: number, userId: number): Promise<Meeting | undefined> {
     const [meeting] = await db
       .select()
       .from(meetings)
@@ -65,7 +65,7 @@ export class DatabaseStorage implements IStorage {
     return meeting;
   }
 
-  async getMeetingsByUser(userId: string): Promise<Meeting[]> {
+  async getMeetingsByUser(userId: number): Promise<Meeting[]> {
     return await db
       .select()
       .from(meetings)
@@ -82,13 +82,13 @@ export class DatabaseStorage implements IStorage {
     return updatedMeeting;
   }
 
-  async deleteMeeting(id: number, userId: string): Promise<void> {
+  async deleteMeeting(id: number, userId: number): Promise<void> {
     await db
       .delete(meetings)
       .where(and(eq(meetings.id, id), eq(meetings.userId, userId)));
   }
 
-  async searchMeetings(userId: string, query: string): Promise<Meeting[]> {
+  async searchMeetings(userId: number, query: string): Promise<Meeting[]> {
     return await db
       .select()
       .from(meetings)
@@ -114,7 +114,7 @@ export class DatabaseStorage implements IStorage {
     return createdIntegration;
   }
 
-  async getIntegrations(userId: string): Promise<Integration[]> {
+  async getIntegrations(userId: number): Promise<Integration[]> {
     return await db
       .select()
       .from(integrations)
@@ -131,7 +131,7 @@ export class DatabaseStorage implements IStorage {
     return updatedIntegration;
   }
 
-  async deleteIntegration(id: number, userId: string): Promise<void> {
+  async deleteIntegration(id: number, userId: number): Promise<void> {
     await db
       .delete(integrations)
       .where(and(eq(integrations.id, id), eq(integrations.userId, userId)));
