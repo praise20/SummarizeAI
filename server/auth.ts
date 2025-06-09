@@ -1,3 +1,5 @@
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
@@ -29,6 +31,54 @@ export function getSession() {
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  // Configure Passport Local Strategy
+  passport.use(
+    new LocalStrategy(
+      {
+        usernameField: "email",
+        passwordField: "password",
+      },
+      async (email, password, done) => {
+        try {
+          const user = await storage.getUserByEmail(email);
+          if (!user) {
+            return done(null, false, { message: "Invalid email or password" });
+          }
+
+          const isValidPassword = await bcrypt.compare(password, user.password);
+          if (!isValidPassword) {
+            return done(null, false, { message: "Invalid email or password" });
+          }
+
+          const { password: _, ...userWithoutPassword } = user;
+          return done(null, userWithoutPassword);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.serializeUser((user: any, done) => {
+    done(null, user.id);
+  });
+
+  passport.deserializeUser(async (id: number, done) => {
+    try {
+      const user = await storage.getUser(id);
+      if (user) {
+        const { password: _, ...userWithoutPassword } = user;
+        done(null, userWithoutPassword);
+      } else {
+        done(null, false);
+      }
+    } catch (error) {
+      done(error);
+    }
+  });
 
   // Register endpoint
   app.post('/api/auth/register', async (req, res) => {

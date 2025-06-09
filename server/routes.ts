@@ -37,7 +37,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post('/api/auth/signup', async (req, res) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password } = req.body;
       
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
@@ -52,8 +52,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.createUser({
         email,
         password: hashedPassword,
-        firstName,
-        lastName,
+        firstName: null,
+        lastName: null,
       });
 
       // Login user
