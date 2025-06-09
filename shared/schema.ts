@@ -25,10 +25,10 @@ export const sessions = pgTable(
 );
 
 // User storage table.
-// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
+  id: serial("id").primaryKey(),
+  email: varchar("email").unique().notNull(),
+  password: varchar("password").notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
@@ -38,7 +38,7 @@ export const users = pgTable("users", {
 
 export const meetings = pgTable("meetings", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  userId: integer("user_id").notNull().references(() => users.id),
   title: varchar("title").notNull(),
   date: timestamp("date").notNull(),
   duration: varchar("duration"),
@@ -55,7 +55,7 @@ export const meetings = pgTable("meetings", {
 
 export const integrations = pgTable("integrations", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  userId: integer("user_id").notNull().references(() => users.id),
   type: varchar("type", { enum: ["slack", "email"] }).notNull(),
   settings: jsonb("settings").notNull(),
   isEnabled: boolean("is_enabled").default(true),

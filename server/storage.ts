@@ -14,44 +14,40 @@ import { eq, desc, and, or, ilike } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
-  // User operations (IMPORTANT) these user operations are mandatory for Replit Auth.
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
+  // User operations
+  getUser(id: number): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: UpsertUser): Promise<User>;
   
   // Meeting operations
   createMeeting(meeting: InsertMeeting): Promise<Meeting>;
-  getMeeting(id: number, userId: string): Promise<Meeting | undefined>;
-  getMeetingsByUser(userId: string): Promise<Meeting[]>;
+  getMeeting(id: number, userId: number): Promise<Meeting | undefined>;
+  getMeetingsByUser(userId: number): Promise<Meeting[]>;
   updateMeeting(id: number, updates: Partial<Meeting>): Promise<Meeting>;
-  deleteMeeting(id: number, userId: string): Promise<void>;
-  searchMeetings(userId: string, query: string): Promise<Meeting[]>;
+  deleteMeeting(id: number, userId: number): Promise<void>;
+  searchMeetings(userId: number, query: string): Promise<Meeting[]>;
   
   // Integration operations
   createIntegration(integration: InsertIntegration): Promise<Integration>;
-  getIntegrations(userId: string): Promise<Integration[]>;
+  getIntegrations(userId: number): Promise<Integration[]>;
   updateIntegration(id: number, updates: Partial<Integration>): Promise<Integration>;
-  deleteIntegration(id: number, userId: string): Promise<void>;
+  deleteIntegration(id: number, userId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations (IMPORTANT) these user operations are mandatory for Replit Auth.
-  async getUser(id: string): Promise<User | undefined> {
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
 
