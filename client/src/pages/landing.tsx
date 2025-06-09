@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Brain, Upload, Mic, Zap, Search, Share2, CheckCircle, Users, Clock, ListTodo } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Landing() {
-  const handleSignIn = () => {
-    window.location.href = "/api/login";
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -22,8 +20,12 @@ export default function Landing() {
             <nav className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
               <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
-              <Button variant="ghost" onClick={handleSignIn}>Sign In</Button>
-              <Button onClick={handleSignIn}>Get Started</Button>
+              <Button variant="ghost" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Get Started</Link>
+              </Button>
             </nav>
             <Button variant="ghost" size="icon" className="md:hidden">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,8 +49,8 @@ export default function Landing() {
                 Upload your meeting recordings and get AI-powered summaries with key decisions, action items, and bullet points. Perfect for remote teams and agencies.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" onClick={handleSignIn} className="text-lg px-8 py-4">
-                  Start Free Trial
+                <Button size="lg" asChild className="text-lg px-8 py-4">
+                  <Link href="/signup">Start Free Trial</Link>
                 </Button>
                 <Button variant="outline" size="lg" className="text-lg px-8 py-4">
                   Watch Demo
@@ -184,8 +186,8 @@ export default function Landing() {
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Join thousands of teams already using SummarizeAI to make their meetings more productive.
           </p>
-          <Button size="lg" onClick={handleSignIn} className="text-lg px-8 py-4">
-            Get Started Free
+          <Button size="lg" asChild className="text-lg px-8 py-4">
+            <Link href="/signup">Get Started Free</Link>
           </Button>
         </div>
       </section>
