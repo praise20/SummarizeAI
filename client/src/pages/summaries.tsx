@@ -97,6 +97,86 @@ export default function Summaries() {
     }
   };
 
+  const handleShare = async (meeting: any) => {
+    const shareUrl = `${window.location.origin}/summaries?meeting=${meeting.id}`;
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `Meeting Summary: ${meeting.title}`,
+          text: `Check out this meeting summary from ${new Date(meeting.date).toLocaleDateString()}`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Link copied",
+          description: "Meeting summary link copied to clipboard",
+        });
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+      toast({
+        title: "Share failed",
+        description: "Could not share meeting summary",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDownload = (meeting: any) => {
+    const content = [
+      `Meeting Summary: ${meeting.title}`,
+      `Date: ${new Date(meeting.date).toLocaleDateString()}`,
+      meeting.duration ? `Duration: ${meeting.duration}` : '',
+      meeting.participants ? `Participants: ${meeting.participants}` : '',
+      '',
+      'Summary:',
+      meeting.summary || 'No summary available',
+      '',
+    ];
+
+    if (meeting.actionItems && meeting.actionItems.length > 0) {
+      content.push('Action Items:');
+      meeting.actionItems
+        .filter((item: any) => typeof item === 'string' && item !== '[object Object]')
+        .forEach((item: string, index: number) => {
+          content.push(`${index + 1}. ${item}`);
+        });
+      content.push('');
+    }
+
+    if (meeting.keyDecisions && meeting.keyDecisions.length > 0) {
+      content.push('Key Decisions:');
+      meeting.keyDecisions
+        .filter((decision: any) => typeof decision === 'string' && decision !== '[object Object]')
+        .forEach((decision: string, index: number) => {
+          content.push(`${index + 1}. ${decision}`);
+        });
+      content.push('');
+    }
+
+    if (meeting.transcription) {
+      content.push('Full Transcription:');
+      content.push(meeting.transcription);
+    }
+
+    const blob = new Blob([content.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${meeting.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_summary.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Download started",
+      description: "Meeting summary downloaded successfully",
+    });
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     queryClient.invalidateQueries({ queryKey: ["/api/meetings"] });
@@ -263,10 +343,20 @@ export default function Summaries() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleShare(meeting)}
+                          title="Share meeting summary"
+                        >
                           <Share2 className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDownload(meeting)}
+                          title="Download meeting summary"
+                        >
                           <Download className="w-4 h-4" />
                         </Button>
                         <Button 

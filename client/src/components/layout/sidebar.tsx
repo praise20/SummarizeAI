@@ -52,7 +52,7 @@ export function Sidebar() {
                   variant="ghost"
                   className={`w-full justify-start ${
                     isActive 
-                      ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                      ? "bg-primary/10 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-black dark:hover:text-white" 
                       : "text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-black dark:hover:text-white"
                   }`}
                 >
