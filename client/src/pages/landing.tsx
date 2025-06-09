@@ -77,7 +77,7 @@ export default function Landing() {
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                     <span className="ml-4 text-sm text-gray-500 dark:text-gray-400">SummarizeAI Dashboard</span>
                   </div>
                 </div>
@@ -167,8 +167,8 @@ export default function Landing() {
               <p className="text-gray-600 dark:text-gray-300">Find specific meetings, decisions, or action items instantly with powerful search and filtering.</p>
             </Card>
             <Card className="p-8">
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center mb-6">
-                <Share2 className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center mb-6">
+                <Share2 className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Easy Sharing</h3>
               <p className="text-gray-600 dark:text-gray-300">Generate shareable links for meeting summaries. Perfect for stakeholder updates and client reports.</p>

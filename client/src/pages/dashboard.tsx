@@ -175,7 +175,7 @@ export default function Dashboard() {
                               </span>
                             )}
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              meeting.status === 'completed' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400' :
+                              meeting.status === 'completed' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400' :
                               meeting.status === 'failed' ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400' :
                               'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400'
                             }`}>

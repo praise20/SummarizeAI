@@ -53,7 +53,7 @@ export function Sidebar() {
                   className={`w-full justify-start ${
                     isActive 
                       ? "bg-primary/10 text-primary hover:bg-primary/20" 
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-black dark:hover:text-white"
                   }`}
                 >
                   <item.icon className="w-5 h-5 mr-3" />
