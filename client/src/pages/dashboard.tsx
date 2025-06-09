@@ -148,8 +148,8 @@ export default function Dashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <FileText className="w-5 h-5 text-primary" />
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                    <FileText className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSummaries}</p>
@@ -162,8 +162,8 @@ export default function Dashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-accent/10 rounded-lg">
-                    <Clock className="w-5 h-5 text-accent" />
+                  <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                    <Clock className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{Math.round(stats.hoursTranscribed / 60)}</p>
