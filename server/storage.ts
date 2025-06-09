@@ -18,6 +18,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: UpsertUser): Promise<User>;
+  updateUserPassword(id: number, hashedPassword: string): Promise<void>;
   
   // Meeting operations
   createMeeting(meeting: InsertMeeting): Promise<Meeting>;

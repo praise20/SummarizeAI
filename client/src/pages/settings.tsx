@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { apiRequest } from "@/lib/queryClient";
 import { Settings as SettingsIcon, User as UserIcon, Shield, Bell } from "lucide-react";
 
 const profileSchema = z.object({
@@ -24,6 +26,66 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 export default function Settings() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const passwordMutation = useMutation({
+    mutationFn: async (password: string) => {
+      return await apiRequest("/api/auth/change-password", {
+        method: "PUT",
+        body: JSON.stringify({ password }),
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password updated",
+        description: "Your password has been changed successfully",
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error as Error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to update password",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handlePasswordChange = () => {
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    passwordMutation.mutate(newPassword);
+  };
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -140,21 +202,40 @@ export default function Settings() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h3 className="font-medium mb-2">Password</h3>
+                  <h3 className="font-medium mb-2">Change Password</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    Change your password to keep your account secure
+                    Update your password to keep your account secure
                   </p>
-                  <Button variant="outline">Change Password</Button>
-                </div>
-                
-                <Separator />
-                
-                <div>
-                  <h3 className="font-medium mb-2">Two-Factor Authentication</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    Add an extra layer of security to your account
-                  </p>
-                  <Button variant="outline">Enable 2FA</Button>
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <Input
+                        id="newPassword"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Enter new password"
+                        className="max-w-sm"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm new password"
+                        className="max-w-sm"
+                      />
+                    </div>
+                    <Button 
+                      onClick={handlePasswordChange}
+                      disabled={!newPassword || !confirmPassword || newPassword !== confirmPassword}
+                    >
+                      Update Password
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
