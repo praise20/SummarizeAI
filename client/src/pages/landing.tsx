@@ -18,8 +18,8 @@ export default function Landing() {
               <span className="text-xl font-bold text-gray-900 dark:text-white">SummarizeAI</span>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
+              <a href="#hero" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Home</a>
               <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
-              <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
               <Button variant="ghost" asChild>
                 <Link href="/login">Sign In</Link>
               </Button>
@@ -37,7 +37,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32">
+      <section id="hero" className="relative py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
             <div className="lg:col-span-6">
