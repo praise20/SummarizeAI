@@ -42,11 +42,18 @@ export async function summarizeMeeting(transcription: string): Promise<{
         {
           role: "system",
           content: `You are an expert meeting summarizer. Analyze the meeting transcription and provide a structured summary in JSON format with the following fields:
-          - summary: A concise bullet-point summary of the main topics discussed
-          - keyDecisions: An array of key decisions made during the meeting
-          - actionItems: An array of specific action items with assignees if mentioned
+          - summary: A concise summary of the main topics discussed (as a single string)
+          - keyDecisions: An array of strings, each representing a key decision made during the meeting
+          - actionItems: An array of strings, each representing a specific action item with assignees if mentioned
           
-          Respond with valid JSON only.`
+          Example format:
+          {
+            "summary": "Team discussed project progress and timeline updates.",
+            "keyDecisions": ["Approved budget increase", "Changed deadline to next month"],
+            "actionItems": ["John will finalize the proposal by Friday", "Sarah will schedule follow-up meeting"]
+          }
+          
+          Respond with valid JSON only. Ensure all array items are simple strings, not objects.`
         },
         {
           role: "user",
@@ -58,10 +65,19 @@ export async function summarizeMeeting(transcription: string): Promise<{
 
     const result = JSON.parse(response.choices[0].message.content || "{}");
 
+    // Ensure we have proper string arrays
+    const keyDecisions = Array.isArray(result.keyDecisions) 
+      ? result.keyDecisions.filter((item: any) => typeof item === 'string')
+      : [];
+    
+    const actionItems = Array.isArray(result.actionItems) 
+      ? result.actionItems.filter((item: any) => typeof item === 'string')
+      : [];
+
     return {
-      summary: result.summary || "No summary available",
-      keyDecisions: Array.isArray(result.keyDecisions) ? result.keyDecisions : [],
-      actionItems: Array.isArray(result.actionItems) ? result.actionItems : [],
+      summary: typeof result.summary === 'string' ? result.summary : "No summary available",
+      keyDecisions,
+      actionItems,
     };
   } catch (error: any) {
     console.error("Error summarizing meeting:", error);

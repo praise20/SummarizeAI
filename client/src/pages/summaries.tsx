@@ -388,14 +388,16 @@ export default function Summaries() {
                             )}
 
                             {/* Key Decisions */}
-                            {meeting.keyDecisions && meeting.keyDecisions.length > 0 && (
+                            {meeting.keyDecisions && Array.isArray(meeting.keyDecisions) && meeting.keyDecisions.length > 0 && (
                               <div>
                                 <h3 className="font-semibold mb-2 flex items-center">
                                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                                   Key Decisions
                                 </h3>
                                 <ul className="space-y-2">
-                                  {meeting.keyDecisions.map((decision, index) => (
+                                  {meeting.keyDecisions
+                                    .filter(decision => typeof decision === 'string' && decision !== '[object Object]')
+                                    .map((decision, index) => (
                                     <li key={index} className="flex items-start space-x-2">
                                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
                                       <span className="text-gray-700 dark:text-gray-300">{decision}</span>
@@ -406,14 +408,16 @@ export default function Summaries() {
                             )}
 
                             {/* Action Items */}
-                            {meeting.actionItems && meeting.actionItems.length > 0 && (
+                            {meeting.actionItems && Array.isArray(meeting.actionItems) && meeting.actionItems.length > 0 && (
                               <div>
                                 <h3 className="font-semibold mb-2 flex items-center">
                                   <ListTodo className="w-4 h-4 mr-2 text-blue-600" />
                                   Action Items
                                 </h3>
                                 <ul className="space-y-2">
-                                  {meeting.actionItems.map((action, index) => (
+                                  {meeting.actionItems
+                                    .filter(action => typeof action === 'string' && action !== '[object Object]')
+                                    .map((action, index) => (
                                     <li key={index} className="flex items-start space-x-2">
                                       <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                       <span className="text-gray-700 dark:text-gray-300">{action}</span>
