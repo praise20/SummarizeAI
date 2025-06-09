@@ -284,9 +284,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (fs.existsSync(audioPath)) {
         fs.unlinkSync(audioPath);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error processing audio file for meeting ${meetingId}:`, error);
-      await storage.updateMeeting(meetingId, { status: "failed" });
+      
+      // Provide specific error messages for common issues
+      let errorMessage = "Processing failed";
+      if (error.message?.includes("could not be decoded")) {
+        errorMessage = "Invalid audio format - please upload a valid audio or video file";
+      } else if (error.message?.includes("Unrecognized file format")) {
+        errorMessage = "Unsupported file format - please use MP3, MP4, WAV, or M4A files";
+      } else if (error.message?.includes("No meaningful audio content")) {
+        errorMessage = "No speech detected in the audio file";
+      }
+      
+      await storage.updateMeeting(meetingId, { 
+        status: "failed",
+        summary: errorMessage 
+      });
     }
   }
 
