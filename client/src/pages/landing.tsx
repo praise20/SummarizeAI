@@ -102,12 +102,12 @@ export default function Landing() {
                       <h4 className="font-medium text-gray-900 dark:text-white mb-2">Action Items</h4>
                       <div className="space-y-2">
                         <div className="flex items-center text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 text-primary mr-3" />
+                          <input type="checkbox" readOnly className="rounded border-gray-300 text-primary mr-3" />
                           <span className="text-gray-600 dark:text-gray-300">Sarah: Update API documentation</span>
                           <span className="ml-auto text-xs text-gray-400">Due: Mar 18</span>
                         </div>
                         <div className="flex items-center text-sm">
-                          <input type="checkbox" checked className="rounded border-gray-300 text-primary mr-3" />
+                          <input type="checkbox" checked readOnly className="rounded border-gray-300 text-primary mr-3" />
                           <span className="text-gray-600 dark:text-gray-300 line-through">Mike: Review pull requests</span>
                           <span className="ml-auto text-xs text-accent">Completed</span>
                         </div>
