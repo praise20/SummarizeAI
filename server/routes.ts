@@ -229,8 +229,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         if (integration.type === "slack") {
           try {
+            const settings = integration.settings as { channelId: string; webhookUrl?: string };
             await sendSlackMessage({
-              channel: integration.settings.channelId,
+              channel: settings.channelId,
               text: `Meeting Summary: ${meeting.title}`,
               blocks: [
                 {
@@ -249,8 +250,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         if (integration.type === "email") {
           try {
+            const settings = integration.settings as { recipients: string | string[]; subject: string };
             await sendEmail({
-              to: integration.settings.recipients,
+              to: settings.recipients,
               subject: `Meeting Summary: ${meeting.title}`,
               html: `
                 <h2>${meeting.title}</h2>
@@ -260,11 +262,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 <p>${meeting.summary}</p>
                 ${meeting.keyDecisions?.length ? `
                   <h3>Key Decisions:</h3>
-                  <ul>${meeting.keyDecisions.map(decision => `<li>${decision}</li>`).join('')}</ul>
+                  <ul>${meeting.keyDecisions.map((decision: string) => `<li>${decision}</li>`).join('')}</ul>
                 ` : ''}
                 ${meeting.actionItems?.length ? `
                   <h3>Action Items:</h3>
-                  <ul>${meeting.actionItems.map(item => `<li>${item}</li>`).join('')}</ul>
+                  <ul>${meeting.actionItems.map((item: string) => `<li>${item}</li>`).join('')}</ul>
                 ` : ''}
               `
             });
