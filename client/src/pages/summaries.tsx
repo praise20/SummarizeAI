@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Sidebar } from "@/components/layout/sidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,7 +23,8 @@ import {
   ListTodo,
   Calendar,
   Clock,
-  Trash2
+  Trash2,
+  X
 } from "lucide-react";
 import { Link } from "wouter";
 import { useEffect } from "react";
@@ -32,6 +34,7 @@ export default function Summaries() {
   const [searchQuery, setSearchQuery] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -315,9 +318,125 @@ export default function Summaries() {
                           }
                         </span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                        View Details
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                            View Details
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle className="text-xl font-bold">{meeting.title}</DialogTitle>
+                          </DialogHeader>
+                          
+                          <div className="space-y-6">
+                            {/* Meeting Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                              <div className="flex items-center space-x-2">
+                                <Calendar className="w-4 h-4 text-gray-500" />
+                                <span className="text-sm">
+                                  {new Date(meeting.date).toLocaleDateString()}
+                                </span>
+                              </div>
+                              {meeting.duration && (
+                                <div className="flex items-center space-x-2">
+                                  <Clock className="w-4 h-4 text-gray-500" />
+                                  <span className="text-sm">{meeting.duration}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center space-x-2">
+                                <Users className="w-4 h-4 text-gray-500" />
+                                <span className="text-sm">
+                                  {meeting.participants 
+                                    ? `${meeting.participants.split(',').length} participants`
+                                    : "No participants listed"
+                                  }
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Status */}
+                            <div>
+                              <h3 className="font-semibold mb-2">Status</h3>
+                              {getStatusBadge(meeting.status)}
+                            </div>
+
+                            {/* Participants */}
+                            {meeting.participants && (
+                              <div>
+                                <h3 className="font-semibold mb-2">Participants</h3>
+                                <div className="flex flex-wrap gap-2">
+                                  {meeting.participants.split(',').map((participant, index) => (
+                                    <Badge key={index} variant="outline">
+                                      {participant.trim()}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Summary */}
+                            {meeting.summary && (
+                              <div>
+                                <h3 className="font-semibold mb-2">Summary</h3>
+                                <div className="prose prose-sm max-w-none dark:prose-invert">
+                                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                    {meeting.summary}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Key Decisions */}
+                            {meeting.keyDecisions && meeting.keyDecisions.length > 0 && (
+                              <div>
+                                <h3 className="font-semibold mb-2 flex items-center">
+                                  <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
+                                  Key Decisions
+                                </h3>
+                                <ul className="space-y-2">
+                                  {meeting.keyDecisions.map((decision, index) => (
+                                    <li key={index} className="flex items-start space-x-2">
+                                      <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+                                      <span className="text-gray-700 dark:text-gray-300">{decision}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Action Items */}
+                            {meeting.actionItems && meeting.actionItems.length > 0 && (
+                              <div>
+                                <h3 className="font-semibold mb-2 flex items-center">
+                                  <ListTodo className="w-4 h-4 mr-2 text-blue-600" />
+                                  Action Items
+                                </h3>
+                                <ul className="space-y-2">
+                                  {meeting.actionItems.map((action, index) => (
+                                    <li key={index} className="flex items-start space-x-2">
+                                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                                      <span className="text-gray-700 dark:text-gray-300">{action}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Transcription */}
+                            {meeting.transcription && (
+                              <div>
+                                <h3 className="font-semibold mb-2">Full Transcription</h3>
+                                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 max-h-64 overflow-y-auto">
+                                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    {meeting.transcription}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </CardContent>
                 </Card>
