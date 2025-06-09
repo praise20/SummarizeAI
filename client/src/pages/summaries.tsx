@@ -105,7 +105,7 @@ export default function Summaries() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return <Badge className="bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400">Completed</Badge>;
+        return <Badge className="bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400">Completed</Badge>;
       case "transcribing":
         return <Badge className="bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400">Transcribing</Badge>;
       case "summarizing":
@@ -391,7 +391,7 @@ export default function Summaries() {
                             {meeting.keyDecisions && Array.isArray(meeting.keyDecisions) && meeting.keyDecisions.length > 0 && (
                               <div>
                                 <h3 className="font-semibold mb-2 flex items-center">
-                                  <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
+                                  <CheckCircle className="w-4 h-4 mr-2 text-blue-600" />
                                   Key Decisions
                                 </h3>
                                 <ul className="space-y-2">
@@ -399,7 +399,7 @@ export default function Summaries() {
                                     .filter(decision => typeof decision === 'string' && decision !== '[object Object]')
                                     .map((decision, index) => (
                                     <li key={index} className="flex items-start space-x-2">
-                                      <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+                                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                       <span className="text-gray-700 dark:text-gray-300">{decision}</span>
                                     </li>
                                   ))}
