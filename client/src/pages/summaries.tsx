@@ -300,22 +300,10 @@ export default function Summaries() {
                       
                       {meeting.summary && (
                         <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                          {(() => {
-                            try {
-                              const parsed = JSON.parse(meeting.summary);
-                              if (Array.isArray(parsed)) {
-                                const text = parsed.join('. ');
-                                return text.length > 120 ? `${text.substring(0, 120)}...` : text;
-                              }
-                              return meeting.summary.length > 120 
-                                ? `${meeting.summary.substring(0, 120)}...` 
-                                : meeting.summary;
-                            } catch {
-                              return meeting.summary.length > 120 
-                                ? `${meeting.summary.substring(0, 120)}...` 
-                                : meeting.summary;
-                            }
-                          })()}
+                          {meeting.summary.length > 120 
+                            ? `${meeting.summary.substring(0, 120)}...` 
+                            : meeting.summary
+                          }
                         </p>
                       )}
                     </div>
@@ -392,30 +380,9 @@ export default function Summaries() {
                               <div>
                                 <h3 className="font-semibold mb-2">Summary</h3>
                                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                                  <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                                    {(() => {
-                                      try {
-                                        // Try to parse if it's a JSON array
-                                        const parsed = JSON.parse(meeting.summary);
-                                        if (Array.isArray(parsed)) {
-                                          return (
-                                            <ul className="space-y-1">
-                                              {parsed.map((item: string, index: number) => (
-                                                <li key={index} className="flex items-start space-x-2">
-                                                  <span className="text-gray-400">•</span>
-                                                  <span>{item}</span>
-                                                </li>
-                                              ))}
-                                            </ul>
-                                          );
-                                        }
-                                        return <p>{parsed}</p>;
-                                      } catch {
-                                        // If parsing fails, display as plain text
-                                        return <p>{meeting.summary}</p>;
-                                      }
-                                    })()}
-                                  </div>
+                                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                    {meeting.summary}
+                                  </p>
                                 </div>
                               </div>
                             )}
