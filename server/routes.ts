@@ -15,17 +15,25 @@ import { ZodError } from "zod";
 
 // Configure multer for file uploads
 const upload = multer({
-  dest: "uploads/",
+  storage: multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+      // Generate unique filename with original extension
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+  }),
   limits: {
     fileSize: 100 * 1024 * 1024, // 100MB limit
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['.mp3', '.mp4', '.m4a', '.wav'];
+    const allowedTypes = ['.mp3', '.mp4', '.m4a', '.wav', '.flac', '.ogg', '.webm'];
     const ext = path.extname(file.originalname).toLowerCase();
     if (allowedTypes.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only .mp3, .mp4, .m4a, and .wav files are allowed.'));
+      cb(new Error('Invalid file type. Only audio/video files are allowed.'));
     }
   },
 });

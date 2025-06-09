@@ -23,9 +23,9 @@ export async function transcribeAudio(audioFilePath: string): Promise<{ text: st
       text: transcription.text,
       duration: 0, // Whisper doesn't return duration, would need separate calculation
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error transcribing audio:", error);
-    throw new Error("Failed to transcribe audio: " + error.message);
+    throw new Error("Failed to transcribe audio: " + (error?.message || String(error)));
   }
 }
 
@@ -56,15 +56,15 @@ export async function summarizeMeeting(transcription: string): Promise<{
       response_format: { type: "json_object" },
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const result = JSON.parse(response.choices[0].message.content || "{}");
 
     return {
       summary: result.summary || "No summary available",
       keyDecisions: Array.isArray(result.keyDecisions) ? result.keyDecisions : [],
       actionItems: Array.isArray(result.actionItems) ? result.actionItems : [],
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error summarizing meeting:", error);
-    throw new Error("Failed to summarize meeting: " + error.message);
+    throw new Error("Failed to summarize meeting: " + (error?.message || String(error)));
   }
 }
