@@ -31,11 +31,19 @@ export default function Settings() {
 
   const passwordMutation = useMutation({
     mutationFn: async (password: string) => {
-      return await apiRequest("/api/auth/change-password", {
+      const response = await fetch("/api/auth/change-password", {
         method: "PUT",
         body: JSON.stringify({ password }),
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update password");
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({

@@ -52,6 +52,13 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async updateUserPassword(id: number, hashedPassword: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, id));
+  }
+
   // Meeting operations
   async createMeeting(meeting: InsertMeeting): Promise<Meeting> {
     const [createdMeeting] = await db.insert(meetings).values(meeting).returning();
