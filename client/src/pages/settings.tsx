@@ -12,7 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Settings as SettingsIcon, User as UserIcon, Shield, Bell } from "lucide-react";
-import type { User } from "@shared/schema";
 
 const profileSchema = z.object({
   firstName: z.string().optional(),
@@ -25,7 +24,6 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 export default function Settings() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
-  const userData = user as User;
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -45,9 +43,9 @@ export default function Settings() {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
+      firstName: (user as any)?.firstName || "",
+      lastName: (user as any)?.lastName || "",
+      email: (user as any)?.email || "",
     },
   });
 
@@ -89,7 +87,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <User className="w-5 h-5 mr-2" />
+                  <UserIcon className="w-5 h-5 mr-2" />
                   Profile Information
                 </CardTitle>
               </CardHeader>
