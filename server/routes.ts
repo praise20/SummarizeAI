@@ -33,11 +33,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Auth routes
+  app.post('/api/auth/signup', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Create user
+      const user = await storage.createUser({
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+      });
+
+      // Login user
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Login failed after signup" });
+        }
+        const { password: _, ...userWithoutPassword } = user;
+        res.json(userWithoutPassword);
+      });
+    } catch (error) {
+      console.error("Signup error:", error);
+      res.status(500).json({ message: "Signup failed" });
+    }
+  });
+
+  app.post('/api/auth/login', (req, res, next) => {
+    passport.authenticate('local', (err: any, user: any, info: any) => {
+      if (err) {
+        return res.status(500).json({ message: "Authentication error" });
+      }
+      if (!user) {
+        return res.status(401).json({ message: info?.message || "Invalid credentials" });
+      }
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Login failed" });
+        }
+        res.json(user);
+      });
+    })(req, res, next);
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      res.json(req.user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -205,7 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Send notifications if integrations are enabled
-      const meeting = await storage.getMeeting(meetingId, "");
+      const meeting = await storage.getMeeting(meetingId, 1); // We'll need to get the actual user ID
       if (meeting) {
         await sendNotifications(meeting);
       }
