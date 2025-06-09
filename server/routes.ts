@@ -109,7 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Meeting routes
   app.post('/api/meetings', isAuthenticated, upload.single('audio'), async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { title, date, duration, participants } = req.body;
       
       if (!req.file) {
@@ -143,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/meetings', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { search } = req.query;
       
       let meetings;
@@ -162,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/meetings/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const meetingId = parseInt(req.params.id);
       
       const meeting = await storage.getMeeting(meetingId, userId);
@@ -179,7 +179,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/meetings/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const meetingId = parseInt(req.params.id);
       
       const meeting = await storage.getMeeting(meetingId, userId);
@@ -203,7 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Integration routes
   app.get('/api/integrations', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const integrations = await storage.getIntegrations(userId);
       res.json(integrations);
     } catch (error) {
@@ -214,7 +214,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/integrations', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const integrationData = insertIntegrationSchema.parse({
         ...req.body,
         userId,
